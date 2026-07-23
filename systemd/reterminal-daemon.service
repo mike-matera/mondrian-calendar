@@ -1,0 +1,27 @@
+[Unit]
+Description=Reterminal Google Calendar e-ink daemon
+After=network-online.target bluetooth.target
+Wants=network-online.target bluetooth.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+EnvironmentFile=%h/.config/reterminal-daemon/reterminal-daemon.env
+ExecStart=%h/bin/reterminal-daemon.pex \
+  --daemon \
+  --eink-mac ${EINK_MAC} \
+  --eink-key ${EINK_KEY} \
+  $CALENDARS \
+  $EXTRA_ARGS
+Restart=always
+RestartSec=5
+
+# Hardening (safe defaults for this daemon)
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=%h/.cache /tmp
+
+[Install]
+WantedBy=default.target
